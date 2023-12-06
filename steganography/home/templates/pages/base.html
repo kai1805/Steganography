@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> {% block title %}Steganography{% endblock %} </title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        h1 {
+            text-align: center;
+        }
+        
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-container > .left-sidebar {
+            width: 30%;
+            padding-top: 5%;
+            border-right: 1px solid #ccc;
+        }
+
+        .main-container > .left-sidebar > p {
+            margin: 0;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        .main-container > .left-sidebar > p:hover {
+            background-color: #ccc;
+            color: white;
+        }
+
+        .main-container > .container {
+            margin: 5%;
+        }
+
+        .container > form > div > label {
+            display: block;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .container > .img-display > h4 {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .container > .img-display > img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .container > .img-display > a {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    {%block content%}
+
+    <nav class="navbar navbar-light bg-primary">
+        <div class="container-fluid">
+          <a class="navbar-brand text-light" href="#">Steganography Demo</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <div class="left-sidebar">
+            <p id="encode-section">Encode</p>
+            <p id="decode-section">Decode</p>
+        </div>
+        
+        <div class="container">
+            <h1>Encode Demo</h1>
+            
+            <form action="" method="post" enctype="multipart/form-data" id="encode-form">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="formFile" class="form-label" id="guide-message">Choose an image and a message to encode</label>
+                    <input class="form-control" type="file" id="formFile" name="image">
+                </div>
+
+                <div class="input-group mb-3" id="text-input">
+                    <span class="input-group-text" id="inputGroup-sizing-default">Message</span>
+                    <input type="text" name="demoText" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                </div>
+
+                <input type="hidden" name="demoMode" value="encode" id="demo_mode">
+
+                <button class="btn btn-primary">Upload</button>
+            </form>
+
+            
+            <div class="img-display">
+                {% if url %}
+                    <h4>Encoded image</h4>
+                    <img src="{{ url }}" alt="Encoded image">
+                    <a href="{{ url }}" download class="btn btn-primary mt-5">Download</a>
+                {% endif %}
+            </div>
+            
+            <div id="decoded-text">                
+                {% if decode %}
+                    <h4 class="mt-5" style="text-align: center;">Decoded message</h4>
+                    <p>{{decode}}</p>  
+                    <input type="hidden" id="decodeFlag" value="decode" name="sthsth">                  
+                {% endif %}
+            </div>
+            
+        </div>
+    </div>
+
+    {% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script>
+        var encodeSection = document.querySelector("#encode-section");
+        var decodeSection = document.querySelector("#decode-section");
+        var sectionTitle = document.querySelector(".container > h1");
+        var guideMessage = document.querySelector("#guide-message");
+        var textInput = document.querySelector("#text-input");
+        var demoMode = document.querySelector("#demo_mode");
+        var encodedImage = document.querySelector(".img-display");
+        var decodedText = document.querySelector("#decoded-text");
+        var encodedImg = document.querySelector(".img-display > img");
+        var decodedMessage = document.querySelector("#decoded-text > p");
+        var decodeCheck = document.querySelector("#decodeFlag")
+
+        encodeSection.addEventListener("click", () => {
+            sectionTitle.textContent = "Encode Demo";
+            guideMessage.textContent = "Choose an image and a message to encode";
+            textInput.classList.remove("hidden");
+            demoMode.setAttribute("value", "encode");
+            encodedImage.classList.remove("hidden");
+            decodedText.classList.add("hidden");
+        });
+
+        if (decodeCheck) {
+            sectionTitle.textContent = "Decode Demo";
+            guideMessage.textContent = "Choose an image to decode";
+            textInput.classList.add("hidden");
+            demoMode.setAttribute("value", "decode");
+            encodedImage.classList.add("hidden");
+            decodedText.classList.remove("hidden");
+        }
+        
+        decodeSection.addEventListener("click", () => {
+            sectionTitle.textContent = "Decode Demo";
+            guideMessage.textContent = "Choose an image to decode";
+            textInput.classList.add("hidden");
+            demoMode.setAttribute("value", "decode");
+            encodedImage.classList.add("hidden");
+            decodedText.classList.remove("hidden");
+        });
+    </script>
+</body>
+</html>
